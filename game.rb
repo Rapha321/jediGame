@@ -7,35 +7,48 @@ class Game
     def initialize
         @player1 = Player.new("Princess Donuts Head")
         @player2 = Player.new("Obi Wan")
+        @players = [@player1, @player2].shuffle
         @round = 1
     end
 
-    def play
+    def next_round
+        puts "---------------------"
+        puts "\t Round #: #{@round}"
+        puts "---------------------"
+        @players.rotate!
+        @round += 1
+
+    end
+
+    def display_status
+        puts "---------------------"
+        puts "\t Game Status"
+        puts "---------------------"
+
+        @players.each{|player| puts "#{player.name} HP: #{player.dead? ? 'DEAD' : player.hp}"}
+
+        sleep 1
+    end
+
+    def winner
+        winner = @players.find{|player| !player.dead?}
+        puts "The winner is #{winner.name}"
+    end
+
+    def game_over?
+        @players.select{|player| player.dead?}.count > 0
         
-        attack_jedi = @player1
-        defend_jedi = @player2
+    end
 
-        while (attack_jedi.hp > 0 && defend_jedi.hp > 0) do
-            puts "---------------------"
-            puts "\t Round #: #{@round}"
-            puts "---------------------"
-
-            puts "> #{attack_jedi.name} attacks #{defend_jedi.name}"
-            damage = rand(attack_jedi.ap) + 1
-
-            puts "> #{defend_jedi.name} is taking #{damage} damage points"
-
-            defend_jedi.hp -= damage
-
-            puts "---------------------"
-            puts "\t Game Status"
-            puts "---------------------"
-            puts "#{attack_jedi.name} HP: #{attack_jedi.hp}"
-            puts "#{defend_jedi.name} HP: #{attack_jedi.hp}"
-
-            @round += 1
+    def play  
+        until (game_over?) do
+            attack_jedi = @players.first
+            defend_jedi = @players.last
+            next_round
+            attack_jedi.attacks(defend_jedi)
+            display_status
         end
-
+        winner
     end
 
 end

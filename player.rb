@@ -26,5 +26,20 @@ class Player
         @hp = points
     end
 
+    def dead?
+        @hp <= 0
+    end
+
+    def attacks(defender)
+        puts "> #{self.name} attacks #{defender.name}"
+        damage = rand(self.ap) + 1
+
+        defender.take_damage(damage)
+    end
+
+    def take_damage(points)
+        puts "> #{@name} is taking #{points} damage points"
+        @hp -= points  
+    end
 
 end
